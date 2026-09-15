@@ -1,265 +1,424 @@
-// ─── NON-CALCULATOR PAPER (sec: "A") ────────────────────────────────────────
-// New types used below:
-//   "order"   – drag/drop or fill 4 blanks in order
-//   "multi"   – tick all that apply (array answer)
-//   "twonumber" – already exists (quotient + remainder)
-//   "table"   – fill missing cells in a table
+// ─────────────────────────────────────────────────────────────────────────
+// FRACTIONS, DECIMALS, PERCENTAGES & ROUNDING (single section, no images)
+// ─────────────────────────────────────────────────────────────────────────
+//
+// FRACTION DISPLAY
+// Fractions are written with a horizontal line using a small inline helper,
+// `frac(numerator, denominator)`, used inside question `text` and
+// `displayAnswer` strings. Add this CSS wherever your quiz styles live:
+//
+//   .frac { display: inline-flex; flex-direction: column; text-align: center;
+//           vertical-align: middle; margin: 0 2px; line-height: 1.1; }
+//   .frac .num { border-bottom: 1px solid currentColor; padding: 0 2px; }
+//   .frac .denom { padding: 0 2px; }
+//
+// ANSWER CHECKING
+// Fraction answers are stored/compared as plain strings like "3/4" (not the
+// HTML). `checkFraction` simplifies both the submitted value and the target
+// answer before comparing, so equivalent fractions (e.g. "2/4" vs "1/2")
+// are accepted.
+
+// ─── Helpers ────────────────────────────────────────────────────────────
+
+function frac(num, denom) {
+  return `<span class="frac"><span class="num">${num}</span><span class="denom">${denom}</span></span>`;
+}
+
+function gcd(a, b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
+  while (b) {
+    [a, b] = [b, a % b];
+  }
+  return a || 1;
+}
+
+function parseFraction(str) {
+  const cleaned = String(str).trim().replace(/\s+/g, "");
+  const parts = cleaned.split("/");
+  if (parts.length !== 2) return null;
+  const num = parseInt(parts[0], 10);
+  const denom = parseInt(parts[1], 10);
+  if (isNaN(num) || isNaN(denom) || denom === 0) return null;
+  return [num, denom];
+}
+
+function simplifyFraction(num, denom) {
+  const g = gcd(num, denom);
+  let n = num / g;
+  let d = denom / g;
+  if (d < 0) {
+    n = -n;
+    d = -d;
+  }
+  return [n, d];
+}
+
+// Checks whether a submitted fraction string is equivalent to the target
+// fraction string, after simplifying both.
+function checkFraction(submitted, target) {
+  const a = parseFraction(submitted);
+  const b = parseFraction(target);
+  if (!a || !b) return false;
+  const [an, ad] = simplifyFraction(a[0], a[1]);
+  const [bn, bd] = simplifyFraction(b[0], b[1]);
+  return an === bn && ad === bd;
+}
+
+function normalizeFractionInput(v) {
+  return String(v).trim().replace(/\s+/g, "");
+}
+
+// ─── Questions ─────────────────────────────────────────────────────────
 
 export const questions = [
 
   // ═══════════════════════════════════════════════════════════════════
-  // SECTION A – Non-calculator (3 questions)
-  // ═══════════════════════════════════════════════════════════════════
-
- // SECTION A – Non-calculator (3 questions)
-
-{
-id: "A1",
-sec: "A",
-marks: 1,
-type: "number",
-text: "Lucy works in a furniture shop.\n\nShe wants to know how many hours she works each week.\n\nComplete the calculation.\n\n7 × 5 = ",
-answer: 35,
-displayAnswer: "35",
-hint: "Multiply 7 by 5.",
-explanation: "7 × 5 = 35 hours per week."
-},
-
-{
-id: "A2",
-sec: "A",
-marks: 3,
-type: "yesno",
-text: "Lucy has 5 weeks of holidays in the year.\n\nShe will work for all the other weeks in the year.\n\nLucy says she will work for 43 weeks in the year.\n\nIs Lucy correct?\n\nShow why you think this.",
-answer: "Yes",
-displayAnswer: "Yes",
-hint: "There are 52 weeks in a year. Subtract the 5 weeks of holiday.",
-explanation: "52 - 5 = 47 weeks. Lucy would work 47 weeks, not 43 weeks. So Lucy is NOT correct. Answer: No."
-},
-
-{
-id: "A3",
-sec: "A",
-marks: 3,
-type: "twonumber",
-labels: ["Number of shelves", "Brackets left over"],
-text: "Lucy fits shelves in the shop.\n\nShe needs 4 brackets to fit each shelf.\n\nLucy has 58 brackets.\n\nHow many shelves can Lucy fit?\n\nShow how many brackets are left over.",
-answer: [14, 2],
-displayAnswer: "14 shelves, 2 brackets left over",
-hint: "Divide 58 by 4. The answer tells you shelves. The remainder is brackets left over.",
-explanation: "58 ÷ 4 = 14 remainder 2. So Lucy can fit 14 shelves with 2 brackets left over."
-},
-
-  // ═══════════════════════════════════════════════════════════════════
-  // SECTION B – Calculator (15 questions, skip Q10)
+  // 1. Mixed number → top-heavy (improper) fraction — 3 questions
   // ═══════════════════════════════════════════════════════════════════
 
   {
-    id: "B1",
-    sec: "B",
-    marks: 1,
-    type: "choice",
-    image: "B1 – Clock Reading",
-    imgSrc: "images/QB1.png",
-    text: "Lucy wants to wake up before seven o'clock.\n\nWhat time will Lucy set her alarm clock to?\n\nTick (✓) the correct answer.",
-    options: ["A", "B", "C", "D"],
-    answer: "C",
-    displayAnswer: "C",
-    hint: "Look for the clock showing a time before 7 o'clock.",
-    explanation: "Clock A shows 9:00. Clock B shows 1:00. Clock C shows before 7. Clock D shows 7:00. Answer is C."
-  },
-
-  {
-    id: "B2",
-    sec: "B",
+    id: "F1",
+    sec: "A",
     marks: 1,
     type: "text",
-    image: "B2 – Bus times",
-    imgSrc: "images/QB2.png",
-    text: "Lucy looks at the waiting times for buses.\n\nLucy takes a bus to the station. She takes the bus with the least waiting time.\n\nWhich bus does Lucy take?",
-    answer: "8",
-    displayAnswer: "Bus 8",
-    normalize: v => v.trim().toLowerCase().replace(/\s/g, ""),
-    check: v => v === "8" || v === "bus8",
-    hint: "Find buses going to the station. Which has the smallest waiting time?",
-    explanation: "Buses to station: Bus 4 (20 min), Bus 8 (9 min), Bus 13 (14 min). Bus 8 has the least waiting time."
+    text: `Write 2${frac(1, 4)} as a top-heavy (improper) fraction.`,
+    answer: "9/4",
+    displayAnswer: frac(9, 4),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "9/4"),
+    hint: "Multiply the whole number by the denominator, then add the numerator.",
+    explanation: `2${frac(1, 4)} = (2 × 4 + 1) over 4 = ${frac(9, 4)}`
   },
 
   {
-    id: "B3",
-    sec: "B",
+    id: "F2",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: `Write 3${frac(2, 5)} as a top-heavy (improper) fraction.`,
+    answer: "17/5",
+    displayAnswer: frac(17, 5),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "17/5"),
+    hint: "Multiply the whole number by the denominator, then add the numerator.",
+    explanation: `3${frac(2, 5)} = (3 × 5 + 2) over 5 = ${frac(17, 5)}`
+  },
+
+  {
+    id: "F3",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: `Write 1${frac(5, 6)} as a top-heavy (improper) fraction.`,
+    answer: "11/6",
+    displayAnswer: frac(11, 6),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "11/6"),
+    hint: "Multiply the whole number by the denominator, then add the numerator.",
+    explanation: `1${frac(5, 6)} = (1 × 6 + 5) over 6 = ${frac(11, 6)}`
+  },
+
+  // ═══════════════════════════════════════════════════════════════════
+  // 2. Top-heavy fraction → mixed number — 3 questions
+  // ═══════════════════════════════════════════════════════════════════
+
+  {
+    id: "F4",
+    sec: "A",
+    marks: 1,
+    type: "twonumber",
+    labels: ["Whole number", "Fraction"],
+    text: `Write ${frac(9, 4)} as a mixed number.`,
+    answer: [2, "1/4"],
+    displayAnswer: `2${frac(1, 4)}`,
+    checkPart: (i, v) => (i === 0 ? Number(v) === 2 : checkFraction(v, "1/4")),
+    hint: "Divide the numerator by the denominator. The remainder becomes the new numerator.",
+    explanation: `9 ÷ 4 = 2 remainder 1, so ${frac(9, 4)} = 2${frac(1, 4)}`
+  },
+
+  {
+    id: "F5",
+    sec: "A",
+    marks: 1,
+    type: "twonumber",
+    labels: ["Whole number", "Fraction"],
+    text: `Write ${frac(17, 5)} as a mixed number.`,
+    answer: [3, "2/5"],
+    displayAnswer: `3${frac(2, 5)}`,
+    checkPart: (i, v) => (i === 0 ? Number(v) === 3 : checkFraction(v, "2/5")),
+    hint: "Divide the numerator by the denominator. The remainder becomes the new numerator.",
+    explanation: `17 ÷ 5 = 3 remainder 2, so ${frac(17, 5)} = 3${frac(2, 5)}`
+  },
+
+  {
+    id: "F6",
+    sec: "A",
+    marks: 1,
+    type: "twonumber",
+    labels: ["Whole number", "Fraction"],
+    text: `Write ${frac(23, 6)} as a mixed number.`,
+    answer: [3, "5/6"],
+    displayAnswer: `3${frac(5, 6)}`,
+    checkPart: (i, v) => (i === 0 ? Number(v) === 3 : checkFraction(v, "5/6")),
+    hint: "Divide the numerator by the denominator. The remainder becomes the new numerator.",
+    explanation: `23 ÷ 6 = 3 remainder 5, so ${frac(23, 6)} = 3${frac(5, 6)}`
+  },
+
+  // ═══════════════════════════════════════════════════════════════════
+  // 3. Fraction addition — 3 questions (1 same denominator, 2 different)
+  // ═══════════════════════════════════════════════════════════════════
+
+  {
+    id: "F7",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: `Work out ${frac(1, 5)} + ${frac(2, 5)}\n\nGive your answer as a fraction in its simplest form.`,
+    answer: "3/5",
+    displayAnswer: frac(3, 5),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "3/5"),
+    hint: "The denominators are already the same. Just add the numerators.",
+    explanation: `1 + 2 = 3, so ${frac(1, 5)} + ${frac(2, 5)} = ${frac(3, 5)}`
+  },
+
+  {
+    id: "F8",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: `Work out ${frac(1, 2)} + ${frac(1, 3)}\n\nGive your answer as a fraction in its simplest form.`,
+    answer: "5/6",
+    displayAnswer: frac(5, 6),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "5/6"),
+    hint: "Find a common denominator (6) before adding.",
+    explanation: `${frac(1, 2)} = ${frac(3, 6)} and ${frac(1, 3)} = ${frac(2, 6)}. 3 + 2 = 5, so the answer is ${frac(5, 6)}`
+  },
+
+  {
+    id: "F9",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: `Work out ${frac(2, 3)} + ${frac(1, 4)}\n\nGive your answer as a fraction in its simplest form.`,
+    answer: "11/12",
+    displayAnswer: frac(11, 12),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "11/12"),
+    hint: "Find a common denominator (12) before adding.",
+    explanation: `${frac(2, 3)} = ${frac(8, 12)} and ${frac(1, 4)} = ${frac(3, 12)}. 8 + 3 = 11, so the answer is ${frac(11, 12)}`
+  },
+
+  // ═══════════════════════════════════════════════════════════════════
+  // 4. Fraction ÷ fraction — 2 questions
+  // ═══════════════════════════════════════════════════════════════════
+
+  {
+    id: "F10",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: `Work out ${frac(2, 3)} ÷ ${frac(1, 4)}\n\nGive your answer as a fraction in its simplest form.`,
+    answer: "8/3",
+    displayAnswer: frac(8, 3),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "8/3"),
+    hint: "To divide by a fraction, multiply by its reciprocal (flip it upside down).",
+    explanation: `${frac(2, 3)} ÷ ${frac(1, 4)} = ${frac(2, 3)} × ${frac(4, 1)} = ${frac(8, 3)}`
+  },
+
+  {
+    id: "F11",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: `Work out ${frac(3, 5)} ÷ ${frac(2, 5)}\n\nGive your answer as a fraction in its simplest form.`,
+    answer: "3/2",
+    displayAnswer: frac(3, 2),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "3/2"),
+    hint: "To divide by a fraction, multiply by its reciprocal (flip it upside down).",
+    explanation: `${frac(3, 5)} ÷ ${frac(2, 5)} = ${frac(3, 5)} × ${frac(5, 2)} = ${frac(15, 10)} = ${frac(3, 2)}`
+  },
+
+  // ═══════════════════════════════════════════════════════════════════
+  // 5. Fraction → decimal — 4 questions
+  // ═══════════════════════════════════════════════════════════════════
+
+  {
+    id: "F12",
+    sec: "A",
     marks: 1,
     type: "number",
-    image: "B3 – Rail Ticket Cost Chart",
-    imgSrc: "images/QB3.png",
-    text: "Lucy compares the costs of rail and bus tickets.\n\nThe chart shows the cost of rail tickets.\n\nLucy pays £11 for an adult week bus ticket.\n\nHow much less does Lucy pay for an adult week bus ticket than an adult week rail ticket?",
-    answer: 16,
-    displayAnswer: "£16",
-    hint: "Read the adult week rail ticket cost from the chart. Subtract £11.",
-    explanation: "Adult week rail ticket costs £27. £27 - £11 = £16"
+    text: `Write ${frac(1, 4)} as a decimal.`,
+    answer: 0.25,
+    displayAnswer: "0.25",
+    hint: "Divide the numerator by the denominator: 1 ÷ 4.",
+    explanation: `1 ÷ 4 = 0.25`
   },
 
   {
-    id: "B4",
-    sec: "B",
-    marks: 1,
-    type: "choice",
-    text: "Lucy pays for her travel. She works out how much money is left over.\n\nShe does this calculation:\n\n154 − 29 ___ 125\n\nWhat is the missing symbol?\n\nTick (✓) the correct answer.",
-    options: ["+", "=", "×", "÷"],
-    answer: "=",
-    displayAnswer: "=",
-    hint: "Work out 154 − 29 and see what it equals.",
-    explanation: "154 − 29 = 125, so the missing symbol is = (equals)."
-  },
-
-  {
-    id: "B5",
-    sec: "B",
+    id: "F13",
+    sec: "A",
     marks: 1,
     type: "number",
-    image: "B5 – Pyramid Shape",
-    imgSrc: "images/QB5.png",
-    text: "Lucy sells lamps in the shape of a pyramid.\n\nHow many corners does the base of the pyramid have?",
-    answer: 4,
-    displayAnswer: "4",
-    hint: "Look at the base of the pyramid. Count the corners.",
-    explanation: "A pyramid has a square base. A square has 4 corners."
+    text: `Write ${frac(3, 5)} as a decimal.`,
+    answer: 0.6,
+    displayAnswer: "0.6",
+    hint: "Divide the numerator by the denominator: 3 ÷ 5.",
+    explanation: `3 ÷ 5 = 0.6`
   },
 
   {
-    id: "B6",
-    sec: "B",
-    marks: 3,
-    type: "number",
-    image: "B6 – Measuring Scale",
-    imgSrc: "images/QB6.png",
-    text: "Lucy puts a lamp into a box.\n\nThe arrow shows how tall the lamp is.\n\nThe box is 6 cm taller than the lamp.\n\nHow tall is the box to the nearest division?\n\nUse the correct unit.",
-    answer: 95,
-    displayAnswer: "95 cm",
-    hint: "Read where the arrow points on the scale. Add 6 cm to that measurement.",
-    explanation: "The lamp measures 89 cm (where the arrow points). 89 + 6 = 95 cm."
-  },
-
-  {
-    id: "B7",
-    sec: "B",
-    marks: 1,
-    type: "choice",
-    image: "B7 – Shape Selection",
-    imgSrc: "images/QB7.png",
-    text: "Lucy sells a table. The top of the table is a hexagon.\n\nWhich shape is a hexagon?\n\nTick (✓) the correct answer.",
-    options: ["A", "B", "C", "D", "E", "F"],
-    answer: "C",
-    displayAnswer: "C",
-    hint: "A hexagon has 6 sides.",
-    explanation: "A hexagon is the shape with 6 sides. Option C shows a hexagon."
-  },
-
-  {
-    id: "B8",
-    sec: "B",
-    marks: 2,
-    type: "yesno",
-    image: "B8 – Trolley and Weights",
-    imgSrc: "images/QB8.png",
-    text: "Lucy puts one box on a trolley.\n\nThe box on the trolley has a weight of 27 kg.\n\nThe most weight the trolley can take is 50 kg.\n\nShe has another box with a weight of 19 kg.\n\nCan the trolley take the weight of both boxes?\n\nShow why you think this.",
-    answer: "Yes",
-    displayAnswer: "Yes",
-    hint: "Add the two box weights together. Compare to the maximum weight of 50 kg.",
-    explanation: "27 + 19 = 46 kg. 46 kg is less than 50 kg, so yes, the trolley can take both boxes."
-  },
-
-  {
-    id: "B9a",
-    sec: "B",
+    id: "F14",
+    sec: "A",
     marks: 1,
     type: "number",
-    text: "Round 27 to the nearest 10.",
-    answer: 30,
-    displayAnswer: "30",
-    hint: "Is 27 closer to 20 or 30?",
-    explanation: "27 is closer to 30 than to 20, so rounded to nearest 10 it is 30."
+    text: `Write ${frac(7, 8)} as a decimal.`,
+    answer: 0.875,
+    displayAnswer: "0.875",
+    hint: "Divide the numerator by the denominator: 7 ÷ 8.",
+    explanation: `7 ÷ 8 = 0.875`
   },
 
   {
-    id: "B9b",
-    sec: "B",
+    id: "F15",
+    sec: "A",
     marks: 1,
     type: "number",
-    text: "Use the rounded number to check your answer to question 8.",
-    answer: 49,
-    displayAnswer: "49 kg",
-    hint: "Use 30 instead of 27. Add it to 19.",
-    explanation: "30 + 19 = 49 kg. This is approximately 50 kg, which confirms the trolley can take both boxes."
+    text: `Write ${frac(2, 5)} as a decimal.`,
+    answer: 0.4,
+    displayAnswer: "0.4",
+    hint: "Divide the numerator by the denominator: 2 ÷ 5.",
+    explanation: `2 ÷ 5 = 0.4`
+  },
+
+  // ═══════════════════════════════════════════════════════════════════
+  // 6. Percentage → fraction — 4 questions
+  // ═══════════════════════════════════════════════════════════════════
+
+  {
+    id: "F16",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: "Write 25% as a fraction in its simplest form.",
+    answer: "1/4",
+    displayAnswer: frac(1, 4),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "1/4"),
+    hint: "Write the percentage over 100, then simplify.",
+    explanation: `25% = ${frac(25, 100)} = ${frac(1, 4)}`
   },
 
   {
-    id: "B11",
-    sec: "B",
-    marks: 3,
-    type: "number",
-    text: "A customer pays Lucy for 6 coat hooks.\n\ncoat hook – 12p each\n\nHow much does the customer pay in total?\n\nUse the correct symbol for money.",
-    answer: "0.72",
-    displayAnswer: "£0.72",
-    hint: "Multiply 6 by 12p.",
-    explanation: "6 × 12p = 72p = £0.72"
+    id: "F17",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: "Write 60% as a fraction in its simplest form.",
+    answer: "3/5",
+    displayAnswer: frac(3, 5),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "3/5"),
+    hint: "Write the percentage over 100, then simplify.",
+    explanation: `60% = ${frac(60, 100)} = ${frac(3, 5)}`
   },
 
   {
-    id: "B12",
-    sec: "B",
+    id: "F18",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: "Write 75% as a fraction in its simplest form.",
+    answer: "3/4",
+    displayAnswer: frac(3, 4),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "3/4"),
+    hint: "Write the percentage over 100, then simplify.",
+    explanation: `75% = ${frac(75, 100)} = ${frac(3, 4)}`
+  },
+
+  {
+    id: "F19",
+    sec: "A",
+    marks: 1,
+    type: "text",
+    text: "Write 40% as a fraction in its simplest form.",
+    answer: "2/5",
+    displayAnswer: frac(2, 5),
+    normalize: normalizeFractionInput,
+    check: v => checkFraction(v, "2/5"),
+    hint: "Write the percentage over 100, then simplify.",
+    explanation: `40% = ${frac(40, 100)} = ${frac(2, 5)}`
+  },
+
+  // ═══════════════════════════════════════════════════════════════════
+  // 7. Rounding — 5 questions (nearest 10/100, decimal places, sig figs)
+  // ═══════════════════════════════════════════════════════════════════
+
+  {
+    id: "F20",
+    sec: "A",
     marks: 1,
     type: "number",
-    image: "B12 – Cupboards Table",
-    imgSrc: "images/QB12.png",
-    text: "Lucy has information about cupboards for sale.\n\nLucy looks for a grey cupboard with more than 3 drawers.\n\nHow much will she spend?",
-    answer: 112,
-    displayAnswer: "£112",
-    hint: "Find the grey cupboards. Look for the one with more than 3 drawers.",
-    explanation: "Looking at the table: grey cupboards are 2 drawers (£132), 4 drawers (£112), and 3 drawers (£105). The one with more than 3 drawers is the 4-drawer cupboard at £112."
+    text: "Round 346 to the nearest 10.",
+    answer: 350,
+    displayAnswer: "350",
+    hint: "Is 346 closer to 340 or 350?",
+    explanation: "346 is closer to 350 than to 340, so rounded to the nearest 10 it is 350."
   },
 
   {
-    id: "B13",
-    sec: "B",
-    marks: 1,
-    type: "choice",
-    image: "B13 – Home Deliveries Diagram",
-    imgSrc: "images/QB13.png",
-    text: "Lucy looks at a diagram about home deliveries.\n\nThe first morning home delivery is nearest to the shop.\n\nWhich morning home delivery is first?\n\nTick (✓) to show the answer on the diagram.",
-    options: ["A", "C", "B"],
-    answer: "C",
-    displayAnswer: "C",
-    hint: "Find which morning delivery (empty house symbol) is closest to the shop (filled circle).",
-    explanation: "C is the morning home delivery that is nearest to the shop."
-  },
-
-  {
-    id: "B14",
-    sec: "B",
+    id: "F21",
+    sec: "A",
     marks: 1,
     type: "number",
-    image: "B14 – Furniture Deliveries Chart",
-    imgSrc: "images/QB14a.png",
-    text: "Lucy counts the furniture deliveries she makes.\n\nItem of furniture – Number of deliveries\nsofa – 10\nbed – 17\ncupboard – 8\ntable – 21\n\nLucy needs a bar chart to show the information.\n\nShow the number of deliveries of tables on the chart.",
-    answer: 21,
-    displayAnswer: "21",
-    hint: "Find the number of table deliveries from the data and draw the bar to that height on the chart.",
-    explanation: "The table shows 21 deliveries of tables. Draw a bar up to 21 on the chart."
+    text: "Round 2378 to the nearest 100.",
+    answer: 2400,
+    displayAnswer: "2400",
+    hint: "Is 2378 closer to 2300 or 2400?",
+    explanation: "2378 is closer to 2400 than to 2300, so rounded to the nearest 100 it is 2400."
   },
 
   {
-    id: "B15",
-    sec: "B",
+    id: "F22",
+    sec: "A",
     marks: 1,
-    type: "choice",
-    text: "Lucy buys hot food for lunch.\n\nShe wants to pay less than £5\n\nWhich food will Lucy buy?\n\nTick (✓) the correct answer.",
-    options: ["Sandwich (cold, £3)", "Pie (hot, £4)", "Curry (hot, £6)", "Salad (cold, £4)", "Pizza (hot, £8)", "Pasta (cold, £4)"],
-    answer: "Pie (hot, £4)",
-    displayAnswer: "Pie",
-    hint: "Find the hot foods that cost less than £5.",
-    explanation: "Hot foods: Pie (£4) ✓, Curry (£6) ✗, Pizza (£8) ✗. Only Pie is hot AND less than £5."
+    type: "number",
+    text: "Round 5.678 to 1 decimal place.",
+    answer: 5.7,
+    displayAnswer: "5.7",
+    hint: "Look at the second decimal digit to decide whether to round up or down.",
+    explanation: "5.678 — the second decimal digit is 7, so round up: 5.7"
+  },
+
+  {
+    id: "F23",
+    sec: "A",
+    marks: 1,
+    type: "number",
+    text: "Round 0.0348 to 2 significant figures.",
+    answer: 0.035,
+    displayAnswer: "0.035",
+    hint: "The first significant figure is the first non-zero digit. Count two from there.",
+    explanation: "The first two significant figures are 3 and 4. The next digit (8) rounds the 4 up to 5, giving 0.035."
+  },
+
+  {
+    id: "F24",
+    sec: "A",
+    marks: 1,
+    type: "number",
+    text: "Round 4562 to 2 significant figures.",
+    answer: 4600,
+    displayAnswer: "4600",
+    hint: "The first two significant figures are 4 and 5. Look at the next digit to round.",
+    explanation: "The first two significant figures are 4 and 5. The next digit (6) rounds the 5 up to 6, giving 4600."
   }
+
 ];
 
 export default questions;
