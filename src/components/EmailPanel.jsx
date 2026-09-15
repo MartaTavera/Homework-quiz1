@@ -16,7 +16,7 @@ export function EmailPanel({ score, total, answers, questions }) {
       return `${q.id.padEnd(4)} | ${a.correct ? "✓" : "✗"} | ${q.text.slice(0, 55).padEnd(55)} | Your: ${(a.userDisplay || "—").padEnd(12)} | Answer: ${q.displayAnswer}`;
     }).join("\n");
 
-    const results = `Entry 3 Maths Quiz\nName: ${name.trim()}\nScore: ${score}/${total} (${Math.round(score / total * 100)}%)\n\n${"─".repeat(100)}\n${rows}`;
+    const results = `Entry 2 Maths Quiz\nName: ${name.trim()}\nScore: ${score}/${total} (${Math.round(score / total * 100)}%)\n\n${"─".repeat(100)}\n${rows}`;
 
     try {
       const res = await fetch("https://formsubmit.co/ajax/martatavera@gmail.com", {
