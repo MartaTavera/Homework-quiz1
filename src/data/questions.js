@@ -87,8 +87,8 @@ export const questions = [
     displayAnswer: frac(9, 4),
     normalize: normalizeFractionInput,
     check: v => checkFraction(v, "9/4"),
-    hint: "Multiply the whole number by the denominator, then add the numerator.",
-    explanation: `2${frac(1, 4)} = (2 × 4 + 1) over 4 = ${frac(9, 4)}`
+    hint: "Write the integer number as a fraction by myltiplying and dividing by the denominator of the fraction part, then add.",
+    explanation: `2${frac(1, 4)} = (${frac(8, 4)} + ${frac(1, 4)}) = ${frac(9, 4)}`
   },
 
   {
@@ -101,8 +101,8 @@ export const questions = [
     displayAnswer: frac(17, 5),
     normalize: normalizeFractionInput,
     check: v => checkFraction(v, "17/5"),
-    hint: "Multiply the whole number by the denominator, then add the numerator.",
-    explanation: `3${frac(2, 5)} = (3 × 5 + 2) over 5 = ${frac(17, 5)}`
+    hint: "Write the integer number as a fraction by myltiplying and dividing by the denominator of the fraction part, then add.",
+    explanation: `3${frac(2, 5)} = (${frac(15, 5)} + ${frac(2, 5)}) = ${frac(17, 5)}`
   },
 
   {
@@ -115,8 +115,8 @@ export const questions = [
     displayAnswer: frac(11, 6),
     normalize: normalizeFractionInput,
     check: v => checkFraction(v, "11/6"),
-    hint: "Multiply the whole number by the denominator, then add the numerator.",
-    explanation: `1${frac(5, 6)} = (1 × 6 + 5) over 6 = ${frac(11, 6)}`
+    hint: "Write the integer number as a fraction by myltiplying and dividing by the denominator of the fraction part, then add.",
+    explanation: `1${frac(5, 6)} = (${frac(6, 6)} + ${frac(5, 6)}) = ${frac(11, 6)}`
   },
 
   // ═══════════════════════════════════════════════════════════════════
@@ -133,7 +133,7 @@ export const questions = [
     answer: ["2", "1/4"],
     displayAnswer: `2${frac(1, 4)}`,
     check: (input1, input2) => Number(input1) === 2 && checkFraction(input2, "1/4"),
-    hint: "Write the inteer number as a fraction by myltiplying and dividing by the denominator of the fraction part, then add. ",
+    hint: "Divide the numerator by the denominator. The remainder becomes the new numerator. ",
     explanation: `9 ÷ 4 = 2 remainder 1, so ${frac(9, 4)} = 2${frac(1, 4)}`
   },
 
@@ -144,10 +144,10 @@ export const questions = [
     type: "twotext",
     labels: ["Whole number", "Fraction"],
     text: `Write ${frac(17, 5)} as a mixed number.`,
-    answer: [3, "2/5"],
+    answer: ["3", "2/5"],
     displayAnswer: `3${frac(2, 5)}`,
     checkPart: (i, v) => (i === 0 ? Number(v) === 3 : checkFraction(v, "2/5")),
-    hint: "Write the inteer number as a fraction by myltiplying and dividing by the denominator of the fraction part, then add..",
+    hint: "Divide the numerator by the denominator. The remainder becomes the new numerator.rite the inteer number as a fraction by myltiplying and dividing by the denominator of the fraction part, then add..",
     explanation: `17 ÷ 5 = 3 remainder 2, so ${frac(17, 5)} = 3${frac(2, 5)}`
   },
 
@@ -158,10 +158,10 @@ export const questions = [
     type: "twotext",
     labels: ["Whole number", "Fraction"],
     text: `Write ${frac(23, 6)} as a mixed number.`,
-    answer: [3, "5/6"],
+    answer: ["3", "5/6"],
     displayAnswer: `3${frac(5, 6)}`,
     checkPart: (i, v) => (i === 0 ? Number(v) === 3 : checkFraction(v, "5/6")),
-    hint: "Write the inteer number as a fraction by myltiplying and dividing by the denominator of the fraction part, then add.",
+    hint: "Divide the numerator by the denominator. The remainder becomes the new numerator.",
     explanation: `23 ÷ 6 = 3 remainder 5, so ${frac(23, 6)} = 3${frac(5, 6)}`
   },
 
