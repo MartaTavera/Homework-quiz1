@@ -2,6 +2,23 @@ export function checkAnswer(q, a) {
   let correct = false;
   let userDisplay = "";
 
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a || 1; }
+  function parseFraction(str) {
+    const c = String(str).trim().replace(/\s+/g, "");
+    const p = c.split("/");
+    if (p.length !== 2) return null;
+    const n = parseInt(p[0], 10), d = parseInt(p[1], 10);
+    if (isNaN(n) || isNaN(d) || d === 0) return null;
+    return [n, d];
+  }
+  function simplifyFraction(n, d) { const g = gcd(n, d); let a = n / g, b = d / g; if (b < 0) { a = -a; b = -b; } return [a, b]; }
+  function checkFraction(sub, target) {
+    const a = parseFraction(sub), b = parseFraction(target);
+    if (!a || !b) return false;
+    const [an, ad] = simplifyFraction(a[0], a[1]);
+    const [bn, bd] = simplifyFraction(b[0], b[1]);
+    return an === bn && ad === bd;
+  }
   switch (q.type) {
     case "number": {
       correct = q.check
@@ -63,7 +80,7 @@ export function checkAnswer(q, a) {
     case "twotext": {
       // Order-independent: the pair of inputs must match the pair of answers
       const norm = v => v.trim().toLowerCase();
-      const given  = [norm(a.input ?? ""), norm(a.input2 ?? "")].sort();
+      const given = [norm(a.input ?? ""), norm(a.input2 ?? "")].sort();
       const expect = [...q.answer].map(norm).sort();
       correct = given[0] === expect[0] && given[1] === expect[1];
       userDisplay = [a.input, a.input2].filter(Boolean).join(", ");
@@ -82,7 +99,7 @@ export function checkAnswer(q, a) {
         break;
       }
       const norm = v => v.trim().toLowerCase();
-      const given  = [norm(a.input ?? ""), norm(a.input2 ?? ""), norm(a.input3?? "")].sort();
+      const given = [norm(a.input ?? ""), norm(a.input2 ?? ""), norm(a.input3 ?? "")].sort();
       const expect = [...q.answer].map(norm);
       correct = given[0] === expect[0] && given[1] === expect[1] && given[2] === expect[2];
       userDisplay = [a.input, a.input2, a.input3].filter(Boolean).join(", ");
@@ -105,7 +122,7 @@ export function checkAnswer(q, a) {
         .join(", ");
       break;
     }
-    
+
     default:
       break;
   }

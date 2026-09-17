@@ -2,59 +2,60 @@ import { useState } from "react";
 import { C } from "./config/constants";
 import { questions } from "./data/questions";
 import { checkAnswer } from "./logic/answerChecker";
-import { ImgBox }        from "./components/ImgBox";
-import { JobDeadline }    from "./components/JobDeadline";
-import { JobAdvert }    from "./components/JobAdvert";
-import { JobDist }   from "./components/JobDist";
-import { ProgressBar }   from "./components/ProgressBar";
-import { HintBox }       from "./components/HintBox";
-import { FeedbackBox }   from "./components/FeedbackBox";
+import { ImgBox } from "./components/ImgBox";
+import { JobDeadline } from "./components/JobDeadline";
+import { JobAdvert } from "./components/JobAdvert";
+import { JobDist } from "./components/JobDist";
+import { ProgressBar } from "./components/ProgressBar";
+import { HintBox } from "./components/HintBox";
+import { FeedbackBox } from "./components/FeedbackBox";
 import { QuestionInput } from "./components/QuestionInput";
-import { ResultsTable }  from "./components/ResultsTable";
-import { EmailPanel }    from "./components/EmailPanel";
+import { ResultsTable } from "./components/ResultsTable";
+import { EmailPanel } from "./components/EmailPanel";
 
-const initA = () => ({ input: "", input2: "", selected: null, yesNo: null, skipped: false, submitted: false, correct: false, revealed:false, userDisplay: "" });
+const initA = () => ({ input: "", input2: "", selected: null, yesNo: null, skipped: false, submitted: false, correct: false, revealed: false, userDisplay: "" });
 
 export default function Quiz() {
-  const [answers, setAnswers]   = useState(() => questions.map(initA));
-  const [current, setCurrent]   = useState(0);
+  const [answers, setAnswers] = useState(() => questions.map(initA));
+  const [current, setCurrent] = useState(0);
   const [finished, setFinished] = useState(false);
   const [showHint, setShowHint] = useState(false);
 
-  const q   = questions[current];
-  const a   = answers[current];
-  const sc  = q.sec === "A" ? C.a : C.b;
+  const q = questions[current];
+  const a = answers[current];
+  const sc = q.sec === "A" ? C.a : C.b;
   const upd = patch => setAnswers(prev => prev.map((x, i) => i === current ? { ...x, ...patch } : x));
 
   const canSubmit =
-    q.type === "number"    ? a.input !== "" :
-    q.type === "text"      ? a.input !== "" :
-    q.type === "choice"    ? !!a.selected :
-    q.type === "yesno"     ? !!a.yesNo :
-    q.type === "parcel"    ? !!a.selected :
-    q.type === "twonumber" ? a.input !== "" && a.input2 !== "" : 
-    q.type === "order"     ? (a.inputs ?? []).every(v => v.trim() !== "") :
-    q.type === "multi"     ? (a.selected ?? []).length > 0 :
-    q.type === "twotext"   ? (a.input ?? "").trim() !== "" && (a.input2 ?? "").trim() !== "" :
-    q.type === "threetext"   ? (a.input ?? "").trim() !== "" && (a.input2 ?? "").trim() !== "" && (a.input3 ?? "").trim() !== "":
-    q.type === "table"     ? Object.keys(q.answer).every(k => (a.inputs?.[k] ?? "").trim() !== "") :
-    false;
+    q.type === "number" ? a.input !== "" :
+      q.type === "text" ? a.input !== "" :
+        q.type === "choice" ? !!a.selected :
+          q.type === "yesno" ? !!a.yesNo :
+            q.type === "parcel" ? !!a.selected :
+              q.type === "twonumber" ? a.input !== "" && a.input2 !== "" :
+                q.type === "order" ? (a.inputs ?? []).every(v => v.trim() !== "") :
+                  q.type === "multi" ? (a.selected ?? []).length > 0 :
+                    q.type === "twotext" ? (a.input ?? "").trim() !== "" && (a.input2 ?? "").trim() !== "" :
+                      q.type === "threetext" ? (a.input ?? "").trim() !== "" && (a.input2 ?? "").trim() !== "" && (a.input3 ?? "").trim() !== "" :
+                        q.type === "table" ? Object.keys(q.answer).every(k => (a.inputs?.[k] ?? "").trim() !== "") :
+                          false;
 
   const handleSubmit = () => {
     const result = checkAnswer(q, a);
     upd({ submitted: true, ...result });
   };
 
-  const goNext  = () => { setShowHint(false); if (current + 1 >= questions.length) setFinished(true); else setCurrent(c => c + 1); };
-  const goBack  = () => { setShowHint(false);
+  const goNext = () => { setShowHint(false); if (current + 1 >= questions.length) setFinished(true); else setCurrent(c => c + 1); };
+  const goBack = () => {
+    setShowHint(false);
     const prev = current - 1;
     if (answers[prev].skipped) setAnswers(a => a.map((x, i) => i === prev ? initA() : x));
     setCurrent(prev);
   };
   const retry = () => upd({ input: "", input2: "", inputs: undefined, selected: null, yesNo: null, submitted: false, correct: false, userDisplay: "", revealed: false });
-  const skip    = () => { upd({ submitted: true, correct: false, skipped: true, userDisplay: "(skipped)" }); goNext(); };
-  const reset   = () => { setAnswers(questions.map(initA)); setCurrent(0); setFinished(false); setShowHint(false); };
-  const reveal = () => { upd({revealed:true}) };
+  const skip = () => { upd({ submitted: true, correct: false, skipped: true, userDisplay: "(skipped)" }); goNext(); };
+  const reset = () => { setAnswers(questions.map(initA)); setCurrent(0); setFinished(false); setShowHint(false); };
+  const reveal = () => { upd({ revealed: true }) };
   const score = answers.filter(x => x.correct).length;
 
   // ── Results screen ──────────────────────────────────────────
@@ -125,16 +126,18 @@ export default function Quiz() {
           <span style={{ background: q.sec === "A" ? "#e0f2fe" : "#ede9fe", color: sc, borderRadius: 99, padding: "3px 12px", fontSize: 13, fontWeight: 600 }}>{q.marks} mark{q.marks > 1 ? "s" : ""}</span>
           <span style={{ color: C.neu, fontSize: 13, lineHeight: "1.8" }}>Question {q.id}</span>
         </div>
-        
-        {q.preText && <p style={{ fontSize: 20, fontWeight: 600, color: "#334155", lineHeight: 1.2, marginBottom: 12, marginTop: 0,whiteSpace: "pre-line" }}>{q.preText}</p>}
+
+        {q.preText && <p style={{ fontSize: 20, fontWeight: 600, color: "#334155", lineHeight: 1.2, marginBottom: 12, marginTop: 0, whiteSpace: "pre-line" }}>{q.preText}</p>}
         {q.customContent === "deadline" && <JobDeadline />}
         {q.customContent === "jobs" && <JobDist />}
         {q.customContent === "jobAdvert" && <JobAdvert />}
         {q.image && <ImgBox label={q.image} src={q.imgSrc || ""} />}
+        <p
+          style={{ fontSize: 20, fontWeight: 600, color: "#1e293b", lineHeight: 1.2, marginBottom: 18, marginTop: 0, whiteSpace: "pre-line" }}
+          dangerouslySetInnerHTML={{ __html: q.text }}
+        />
 
-        <p style={{ fontSize: 20, fontWeight: 600, color: "#1e293b", lineHeight: 1.2, marginBottom: 18, marginTop: 0, whiteSpace: "pre-line" }}>{q.text}</p>
-       
-        
+
         {!a.submitted && <HintBox hint={q.hint} show={showHint} onToggle={() => setShowHint(h => !h)} />}
 
         {!a.submitted && (
@@ -178,12 +181,12 @@ export default function Quiz() {
               </button>
             </>
           )}
-           {a.submitted && !a.correct && !a.revealed && (
-          <button onClick={reveal}
-          style={{ padding: "13px 16px", background: "#fff", color: C.neu, border: `2px solid ${C.bdr}`, borderRadius: 8, fontSize: 15, cursor: "pointer" }}>
-            Show Answer
-          </button>
-        )}
+          {a.submitted && !a.correct && !a.revealed && (
+            <button onClick={reveal}
+              style={{ padding: "13px 16px", background: "#fff", color: C.neu, border: `2px solid ${C.bdr}`, borderRadius: 8, fontSize: 15, cursor: "pointer" }}>
+              Show Answer
+            </button>
+          )}
         </div>
 
         <div style={{ marginTop: 14, textAlign: "center", fontSize: 13, color: C.neu }}>
