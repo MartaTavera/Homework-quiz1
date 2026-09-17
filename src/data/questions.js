@@ -309,7 +309,7 @@ export const questions = [
   // ═══════════════════════════════════════════════════════════════════
   // 6. Percentage → fraction — 4 questions
   // ═══════════════════════════════════════════════════════════════════
-
+/*
   {
     id: "F16",
     sec: "A",
@@ -365,13 +365,13 @@ export const questions = [
     hint: "Write the percentage over 100, then simplify.",
     explanation: `40% = ${frac(40, 100)} = ${frac(2, 5)}`
   },
-
+*/
   // ═══════════════════════════════════════════════════════════════════
   // 7. Rounding — 5 questions (nearest 10/100, decimal places, sig figs)
   // ═══════════════════════════════════════════════════════════════════
 
   {
-    id: "F20",
+    id: "F15",
     sec: "A",
     marks: 1,
     type: "number",
@@ -383,7 +383,7 @@ export const questions = [
   },
 
   {
-    id: "F21",
+    id: "F16",
     sec: "A",
     marks: 1,
     type: "number",
@@ -395,7 +395,7 @@ export const questions = [
   },
 
   {
-    id: "F22",
+    id: "F17",
     sec: "A",
     marks: 1,
     type: "number",
@@ -407,7 +407,7 @@ export const questions = [
   },
 
   {
-    id: "F23",
+    id: "F18",
     sec: "A",
     marks: 1,
     type: "number",
@@ -419,7 +419,7 @@ export const questions = [
   },
 
   {
-    id: "F24",
+    id: "F19",
     sec: "A",
     marks: 1,
     type: "number",
