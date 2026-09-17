@@ -26,7 +26,10 @@ export function ResultsTable({ questions, answers, sec }) {
                   <td style={{ padding: "8px 10px", border: `1px solid ${C.bdr}`, fontWeight: 700, color }}>{q.id}</td>
                   <td style={{ padding: "8px 10px", border: `1px solid ${C.bdr}`, fontWeight: 700, color: a.correct ? C.ok : C.err, textAlign: "center" }}>{a.correct ? "✓" : "✗"}</td>
                   <td style={{ padding: "8px 10px", border: `1px solid ${C.bdr}`, color: a.userDisplay && a.userDisplay !== "(skipped)" ? "#334155" : C.neu }}>{a.userDisplay || "—"}</td>
-                  <td style={{ padding: "8px 10px", border: `1px solid ${C.bdr}`, color: C.ok, fontWeight: 600 }}>{q.displayAnswer}</td>
+                  <td
+                    style={{ padding: "8px 10px", border: `1px solid ${C.bdr}`, color: C.ok, fontWeight: 600 }}
+                    dangerouslySetInnerHTML={{ __html: q.displayAnswer }}
+                  />
                 </tr>
               );
             })}
@@ -36,3 +39,7 @@ export function ResultsTable({ questions, answers, sec }) {
     </div>
   );
 }
+
+
+
+

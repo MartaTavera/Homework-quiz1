@@ -255,7 +255,7 @@ export const questions = [
     text: `Write ${frac(1, 4)} as a decimal.`,
     answer: 0.25,
     displayAnswer: "0.25",
-    hint: "Divide the numerator by the denominator: 1 ÷ 4.",
+    hint: `Get an equivalent fraction with 10 or 100 as deniminator, 4 x 25 = 100, hence ${frac(1, 4)} = ${frac(25, 100)}` ,
     explanation: `1 ÷ 4 = 0.25`
   },
 
@@ -267,7 +267,8 @@ export const questions = [
     text: `Write ${frac(3, 5)} as a decimal.`,
     answer: 0.6,
     displayAnswer: "0.6",
-    hint: "Divide the numerator by the denominator: 3 ÷ 5.",
+    hint: `Get an equivalent fraction with 10 or 100 as deniminator, ${frac(3, 5)} = ${frac(6, 10)}. 
+    Or you can divide the numerator by the denominator: 3 ÷ 5.`,
     explanation: `3 ÷ 5 = 0.6`
   },
 
@@ -276,11 +277,11 @@ export const questions = [
     sec: "A",
     marks: 1,
     type: "number",
-    text: `Write ${frac(7, 8)} as a decimal.`,
-    answer: 0.875,
-    displayAnswer: "0.875",
-    hint: "Divide the numerator by the denominator: 7 ÷ 8.",
-    explanation: `7 ÷ 8 = 0.875`
+    text: `Write ${frac(3, 4)} as a decimal.`,
+    answer: 0.75,
+    displayAnswer: "0.75",
+    hint: " Get an equivalent fraction with 10 or 100 as deniminator.",
+    explanation: `7 ÷ 4 = 0.75`
   },
 
   {
@@ -291,7 +292,7 @@ export const questions = [
     text: `Write ${frac(2, 5)} as a decimal.`,
     answer: 0.4,
     displayAnswer: "0.4",
-    hint: "Divide the numerator by the denominator: 2 ÷ 5.",
+    hint: "Get an equivalent fraction with 10 or 100 as deniminator. Or divide the numerator by the denominator: 2 ÷ 5.",
     explanation: `2 ÷ 5 = 0.4`
   },
 
@@ -309,7 +310,7 @@ export const questions = [
     displayAnswer: frac(1, 4),
     normalize: normalizeFractionInput,
     check: v => checkFraction(v, "1/4"),
-    hint: "Write the percentage over 100, then simplify.",
+    hint: "Write the percentage as a fraction over 100, then simplify.",
     explanation: `25% = ${frac(25, 100)} = ${frac(1, 4)}`
   },
 
