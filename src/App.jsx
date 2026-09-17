@@ -3,9 +3,7 @@ import { C } from "./config/constants";
 import { questions } from "./data/questions";
 import { checkAnswer } from "./logic/answerChecker";
 import { ImgBox } from "./components/ImgBox";
-import { JobDeadline } from "./components/JobDeadline";
-import { JobAdvert } from "./components/JobAdvert";
-import { JobDist } from "./components/JobDist";
+
 import { ProgressBar } from "./components/ProgressBar";
 import { HintBox } from "./components/HintBox";
 import { FeedbackBox } from "./components/FeedbackBox";

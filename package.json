@@ -1,9 +1,9 @@
 {
-  "name": "entry3-quiz-2",
+  "name": "Homework-quiz1",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/MartaTavera/entry2-quiz",
+  "homepage": "https://github.com/MartaTavera/Homework-quiz1",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
