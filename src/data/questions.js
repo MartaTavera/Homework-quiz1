@@ -244,44 +244,54 @@ export const questions = [
   },
 
   // ═══════════════════════════════════════════════════════════════════
-  // 5. Fraction → decimal — 4 questions
+  // 5. Multiplication & division fact
   // ═══════════════════════════════════════════════════════════════════
 
   {
     id: "F12",
     sec: "A",
-    marks: 1,
-    type: "number",
-    text: `Write ${frac(1, 4)} as a decimal.`,
-    answer: 0.25,
-    displayAnswer: "0.25",
-    hint: `Get an equivalent fraction with 10 or 100 as deniminator, 4 x 25 = 100, hence ${frac(1, 4)} = ${frac(25, 100)}` ,
-    explanation: `1 ÷ 4 = 0.25`
+    marks: 3,
+    type: "threetext",
+    labels: ["70 × 25", "175 ÷ 7", "175 ÷ 0.7"],
+    text: "7 × 25 = 175\n\nUse this fact to work out each of the following.",
+    answer: [1750, 25, 250],
+    check: (input1, input2, input3) =>
+      Number(input1) === 1750 &&
+      Number(input2) === 25 &&
+      Number(input3) === 250,
+    hint: "70 is 10 times 7, so 70 × 25 is 10 times 175. Dividing by 0.7 gives the same result as dividing by 7 then multiplying by 10.",
+    explanation: "a) 70 × 25 = 1750 (10 × 175)\nb) 175 ÷ 7 = 25\nc) 175 ÷ 0.7 = 250 (175 ÷ 7 × 10)"
   },
-
+  
   {
     id: "F13",
     sec: "A",
-    marks: 1,
-    type: "number",
-    text: `Write ${frac(3, 5)} as a decimal.`,
-    answer: 0.6,
-    displayAnswer: "0.6",
-    hint: `Get an equivalent fraction with 10 or 100 as deniminator, ${frac(3, 5)} = ${frac(6, 10)}. 
-    Or you can divide the numerator by the denominator: 3 ÷ 5.`,
-    explanation: `3 ÷ 5 = 0.6`
+    marks: 3,
+    type: "threetext",
+    labels: ["60 × 8", "48 ÷ 0.6", "4.8 ÷ 8"],
+    text: "6 × 8 = 48\n\nUse this fact to work out each of the following.",
+    answer: [480, 80, 0.6],
+    check: (input1, input2, input3) =>
+      Number(input1) === 480 &&
+      Number(input2) === 80 &&
+      Math.abs(Number(input3) - 0.6) < 1e-9,
+    hint: "60 is 10 times 6, so 60 × 8 is 10 times 48. Dividing by 0.6 gives the same result as dividing by 6 then multiplying by 10. If both numbers get 10 times smaller, the answer stays the same.",
+    explanation: "a) 60 × 8 = 480 (10 × 48)\nb) 48 ÷ 0.6 = 80 (48 ÷ 6 × 10)\nc) 4.8 ÷ 8 = 0.6 (48 ÷ 8 shrunk by 10 on both sides)"
   },
-
   {
     id: "F14",
     sec: "A",
-    marks: 1,
-    type: "number",
-    text: `Write ${frac(3, 4)} as a decimal.`,
-    answer: 0.75,
-    displayAnswer: "0.75",
-    hint: " Get an equivalent fraction with 10 or 100 as deniminator.",
-    explanation: `7 ÷ 4 = 0.75`
+    marks: 3,
+    type: "threetext",
+    labels: ["90 × 7", "63 ÷ 9", "63 ÷ 0.9"],
+    text: "9 × 7 = 63\n\nUse this fact to work out each of the following.",
+    answer: [630, 7, 70],
+    check: (input1, input2, input3) =>
+      Number(input1) === 630 &&
+      Number(input2) === 7 &&
+      Number(input3) === 70,
+    hint: "90 is 10 times 9, so 90 × 7 is 10 times 63. Dividing by 0.9 gives the same result as dividing by 9 then multiplying by 10.",
+    explanation: "a) 90 × 7 = 630 (10 × 63)\nb) 63 ÷ 9 = 7\nc) 63 ÷ 0.9 = 70 (63 ÷ 9 × 10)"
   },
 
   {
